@@ -1,0 +1,282 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge;IE=9;IE=8;IE=7" />
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>EQUIPMENT STATUS</title>
+
+    <link rel="stylesheet" type="text/css" href="~/Content/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/Content/datatables.net-dt/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/Content/fixedHeader.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/Assets/css/style.css" />
+
+
+    <script>
+        var base_url = "@Request.Url.GetLeftPart(UriPartial.Authority)@Url.Content("~")";
+        var fol_url = base_url + "promis/folStatus";
+        var eol_url = base_url + "promis/eolStatus";
+    </script>
+
+    <div id="forUpdate">
+
+        <!-- The Modal -->
+        <div class="modal alertModal" id="alertModal" style="z-index:9999999">
+            <div class="modal-dialog modal">
+                <div class="modal-content">
+
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                    </div>
+
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <p class="alertModalMessage" style="text-align:center"></p>
+                    </div>
+
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm alertModal">Close</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- The Modal -->
+        <div class="modal" id="myModal">
+            <div class="modal-dialog modal-xl" style="width:1140px">
+                <div class="modal-content">
+
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">TNR UPDATE</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+
+                    <!-- Modal body -->
+                    <div class="modal-body" style="font-size:14px">
+                        <div id="testerPF" hidden></div>
+                        <div class="row mb-2">
+                            <label class="col-3">DATE/TIME:</label>
+                            <input name='date' id='date' class='inputTxt form-control form-control-sm col-4' type='text' value='' readonly style='background-color: #f3f3f3;' />
+                        </div>
+                        <div class="row mb-2">
+                            <label class="col-3">MACHINE PLATFORM:</label>
+                            <input name='machinePF' id='machinePlatform' class='inputTxt form-control form-control-sm col-3' type='text' value='' readonly style='background-color: #f3f3f3;' />
+                            <label class="col-2">PBFT RESULT</label>
+                            <label class="col-1">MIN:</label>
+                            <input id='pbft_min' class='inputTxt form-control form-control-sm col-1' type='number' min="10" />
+                            <label class="col-1">MAX:</label>
+                            <input id='pbft_max' class='inputTxt form-control form-control-sm col-1' type='number' max="70" />
+                        </div>
+                        <div class="row mb-2">
+                            <label class="col-3">MACHINE ID:</label>
+                            <input name='machineID' id='machineID' class='inputTxt form-control form-control-sm col-3' type='text' value='' readonly style='background-color: #f3f3f3;' />
+                            <label class="col-3">CARRIER TAPE DESCRIPTION:</label>
+                            <input type="text" id="carrier_tape_lot_no" class="inputTxt form-control form-control-sm col-3" autocomplete="off" />
+                        </div>
+                        <div class="row mb-2">
+                            <label class="col-3 package_line">PACKAGE LINE:</label>
+                            <select id="pkgLine" class="inputSelect form-control form-control-sm col-3 package_line"></select>
+                            <label class="col-3">COVER TAPE LOT#:</label>
+                            <input type="text" id="cover_tape_lot_no" class="inputTxt form-control form-control-sm col-3" autocomplete="off" />
+                        </div>
+                        <div class="row mb-2">
+                            <input id="status_owner_track" hidden />
+                            <label class="col-3 status_owner">STATUS OWNER:</label>
+                            <select id='stsOwner' name='stsOwner' class='inputSelect form-control form-control-sm col-3 status_owner to_disable'></select>
+                            <label class="col-3">UPH:</label>
+                            <select name='uph' id='uph_select' class='inputSelect form-control form-control-sm col-3' disabled></select>
+                        </div>
+                        <div class="row mb-2">
+                            <input id="status_track" hidden />
+                            <label class="col-3 status">STATUS:</label>
+                            <select id='stsDes' name='stsDes' class='inputSelect form-control form-control-sm col-3 to_disable status'></select>
+                            <label class="col-3 good_units">GOOD UNITS:</label>
+                            <input type="text" class="inputTxt form-control form-control-sm col-3 good_units to_disable" id="bin1" />
+                        </div>
+                        <div class="row mb-2">
+                            <label class="col-3 lot_no">LOT NO:</label>
+                            <input class='inputTxt form-control form-control-sm col-3 to_disable lot_no' data-temp-lot-no='' id='lotNo' name='lotNo' type='text' value='' style="text-transform: uppercase;" maxlength="9" />
+                            <label class="col-3 total_ng_units_results">TOTAL NG UNITS RESULTS:</label>
+                            <input type="number" id="total_ng_units_results" class="inputTxt form-control form-control-sm col-3 to_disable total_ng_units_results" />
+                        </div>
+                        <div class="row mb-2">
+                            <label class="col-3 family_name">FAMILY NAME:</label>
+                            <select id='prodName' name='prodName' class='inputSelect form-control form-control-sm col-3 to_disable family_name'></select>
+                            <label class="col-3 unpicked_device">UNPICKED DEVICE:</label>
+                            <input type="text" id="unpicked_device" class="inputTxt form-control form-control-sm col-3 to_disable unpicked_device" />
+                        </div>
+                        <div class="row mb-2">
+                            <label class="col-3 wafer_id">WAFER ID:</label>
+                            <input type="text" id="waferID" class='inputSelect form-control form-control-sm col-3 to_disable wafer_id' />
+                            <label class="col-3 marking_surface">MARKING SURFACE:</label>
+                            <input type="text" id="marking_surface" class="inputTxt form-control form-control-sm col-3 to_disable marking_surface" />
+                        </div> 
+                        <div class="row mb-2">
+                            <label class="col-3">SWI:</label>
+                            <select id="swi_mode" class='inputSelect form-control form-control-sm col-3'>
+                                <option value="NO SWI">NO SWI</option>
+                                <option value="10% SWI">10% SWI</option>
+                                <option value="20% SWI">20% SWI</option>
+                                <option value="100% SWI">100% SWI</option>
+                            </select>
+                            <label class="col-3 bumped_leads">BUMP LEADS:</label>
+                            <input type="text" id="bump_leads" class="inputTxt form-control form-control-sm col-3 to_disable bumped_leads" />
+                        </div>
+                        <div class="row mb-2">
+                            <label class="col-3 failure_mechanism">FAILURE MECHANISM:</label>
+                            <select id="failure_mech" class='inputSelect form-control form-control-sm col-3 to_disable failure_mechanism'>
+                                <option value="N/A">N/A</option>
+                                <option value="MATERIAL">MATERIAL</option>
+                                <option value="VISION SYSTEM">VISION SYSTEM</option>
+                                <option value="EJECTOR MODULE">EJECTOR MODULE</option>
+                                <option value="FLIPPER MODULE">FLIPPER MODULE</option>
+                                <option value="WAFER TABLE MODULE">WAFER TABLE MODULE</option>
+                                <option value="TURRET/BONDHEAD MODULE">TURRET/BONDHEAD MODULE</option>
+                                <option value="TNR/INDEXER MODULE">TNR/INDEXER MODULE</option>
+                                <option value="BUFFER RAUK MODULE">BUFFER RAUK MODULE</option>
+                                <option value="P/P HEAD MODULE">P/P HEAD MODULE</option>
+                                <option value="NG P/P HEAD MODULE">NG P/P HEAD MODULE</option>
+                                <option value="SEALING MODULE">SEALING MODULE</option>
+                                <option value="LOADER/UNLOADER MODULE">LOADER/UNLOADER MODULE</option>
+                                <option value="INPUT/OUTPUT SPOOLER MODULE">INPUT/OUTPUT SPOOLER MODULE</option>
+                                <option value="HARDWARE">HARDWARE</option>
+                                <option value="SOFTWARE">SOFTWARE</option>
+                                <option value="FACILITY">FACILITY</option>
+                            </select>
+                            <label class="col-3">SWI:</label>
+                            <input type="text" id="swi" class="inputTxt form-control form-control-sm col-3" autocomplete="off" />
+                        </div>
+                        <div class="row mb-2">
+                            <label class="col-3 part_specification">PART SPECIFICATION:</label>
+                            <input type="text" id="part_spec" class='inputSelect form-control form-control-sm col-3 to_disable part_specification' />
+                            <label class="col-3 missing">MISSING:</label>
+                            <input type="text" id="missing" class="inputTxt form-control form-control-sm col-3 to_disable missing" />
+                        </div>
+                        <div class="row mb-2">
+                            <label class="col-3 lsg_repair_type"> LSG REPAIR TYPE:</label>
+                            <select id="lsg_repair_type" class="inputSelect form-control form-control-sm col-3 to_disable lsg_repair_type">
+                                <option value="N/A">NA</option>
+                                <option value="HANDLER">HANDLER</option>
+                                <option value="TESTER">TESTER</option>
+                                <option value="HARDWARE">HARDWARE</option>
+                            </select>
+                            <label class="col-3 lsg_sample"> LSG SAMPLE:</label>
+                            <input type="text" id="lsg_sample" class="inputTxt form-control form-control-sm col-3 to_disable lsg_sample" />
+                        </div>
+                        <div class="row mb-2">
+                            <label class="col-3 package_type"> PACKAGE TYPE:</label>
+                            <select id='pkgType' name='pkgType' readonly class='inputSelect form-control form-control-sm col-3 to_disable package_type' disabled></select>
+                            <label class="col-3 vi5_sample"> VI 5 SAMPLE:</label>
+                            <input type="text" id="vi5_sample" class="inputTxt form-control form-control-sm col-3 to_disable vi5_sample" />
+                        </div>
+                        <div class="row mb-2">
+                            <label class="col-3">REMARKS</label>
+                            <textarea id='remarks' class="form-control form-control-sm col-7" rows='4' name='remarks' style='width: 600px;' maxlength='500'></textarea>
+                        </div>
+                        <div class="row mb-2">
+                            <label class="col-3">GROUP</label>
+                            <select id='group' name='group' class='inputSelect form-control form-control-sm col-3'>
+                                <option value=''>A</option>
+                                <option value=''>B</option>
+                                <option value=''>C</option>
+                                <option value=''>RS</option>
+                            </select>
+                        </div>
+                        <div hidden>
+                            <input class="track" hidden>
+                            <input class="process" hidden />
+                            <input class="setup_flg" hidden />
+                        </div>
+                        <div class="row mb-2">
+                            <select name='user' id='user' class='inputSelect form-control form-control-sm offset-4 col-4' style="width:20%; text-align:center; margin:auto;"></select>
+                        </div>
+                        <div class="row">
+                            <input type='password' name='pass' id='pass' class="form-control form-control-sm offset-4 col-4" style="width:20%; text-align:center; margin:auto;" placeholder='PASSWORD'>
+                        </div>
+                    </div>
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button id="track_in" class="btn btn-secondary to_disable">TRACK IN</button>
+                        <button id="track_out" class="btn btn-secondary to_disable">TRACK OUT</button>
+                        <button id='save' type="button" class="btn btn-success">CHANGE STATUS</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- For Download Excel -->
+    <div class="modal" id="exportToExcel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Filter Export</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <a href="~/promis/ExportToExcel" id='download' type="button" class="btn btn-success">DOWNLOAD</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</head>
+<body>
+    <div class="main">
+        <div class="header3"><img src="~/img/onlogo.jpg" style="width: 300px; height: 90px;" />
+            <span style="position: absolute;top: 25px; margin-left: 25px; width: auto; font-family: sans-serif; font-size: 30px; text-align: center; color: #000000;">OSPI-TARLAC</span></div>
+        <div class='navshadow navleft' style='width: 100%; background-color: #5f5f5f;'>
+
+                <div class="dropdown">
+                    <a class="btn" style="background-color:#5f5f5f; color: white" href="http://PHSM01WS011.ad.onsemi.com">Home</a>
+                    <a class="btn" style="background-color:#5f5f5f; color: white" data-toggle="modal" data-target="#exportToExcel">Export to Excel</a>
+                    @*<button class="btn" style="background-color:#5f5f5f; color: white" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Equipment Status
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item eol">EOL</a>
+                        <a class="dropdown-item fol">FOL</a>
+                    </div>*@
+                </div>
+             
+        </div>
+
+        @RenderBody()
+
+        <div class="footer" style="text-align: center; width:100%">
+            <span style="color:white;">APPLICATIONS ENGINEERING © 2019 v.1.1.0</span>
+        </div>
+        <script type="text/javascript" src="~/Scripts/jquery-3.3.1.min.js"></script>
+        <script type="text/javascript" src="~/Scripts/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" src="~/Scripts/bootstrap.bundle.min.js"></script>
+        <script type="text/javascript" src="~/Scripts/moment.min.js"></script>
+        <script type="text/javascript" src="~/Scripts/date.js"></script>
+        <script type="text/javascript" src="~/Scripts/daterangepicker.js"></script>
+        <script type="text/javascript" src="~/Scripts/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" src="~/Scripts/dataTables.fixedHeader.min.js"></script>
+        <script src="~/Scripts/jquery.tablesorter.min.js" type="text/javascript"></script>
+        <script src="~/Scripts/multifilter.js" type="text/javascript"></script>
+        <script type="text/javascript" src="~/Scripts/bootstrap-notify.min.js"></script>
+        <script src="~/Assets/js/showTableWLP.js" type="text/javascript"></script>
+        <script src="~/Assets/js/selectRow.js" type="text/javascript"></script>
+        <script src="~/Assets/js/changeValidation.js" type="text/javascript"></script>
+        <script src="~/Assets/js/updateForm.js" type="text/javascript"></script>
+        <script src="~/Assets/js/filter.js" type="text/javascript"></script>
+        @*<script src="~/Assets/js/scroll.js" type="text/javascript"></script>*@
+
+</body>
+</html>

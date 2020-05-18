@@ -1,0 +1,70 @@
+﻿@{
+    ViewBag.Title = "wlpStatus";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="content">
+    <p style='text-align: center;'>
+        <b>WLP EQUIPMENT STATUS</b>
+    </p>
+    <input class="loc" value="TNR" hidden />
+    <div class="container-fluid">
+        <div class="row">
+            <div class="form-group col-2">
+                <label class="form-check-label">
+                    STATUS OWNER:
+                </label>
+                <select id="statusOwner" class="filter form-control form-control-sm" name="statusOwner" data-col="STATUS OWNER">
+                    <option value="" default selected></option>
+                </select>
+            </div>
+            <div class="form-group col-2">
+                <label class="form-check-label">
+                    MACHINE PF:
+                </label>
+                <select id="tstpf" class="filter form-control form-control-sm" name="tstpf" data-col="MACHINE PF">
+                    <option value="" default selected></option>
+                </select>
+            </div>
+            <div class="form-group col-2" style="border-right:solid">
+                <label class="form-check-label">
+                    MACHINE ID:
+                </label>
+                <select id="tstID" class="filter form-control form-control-sm" name="tstID" data-col="MACHINE ID">
+                    <option value="" default selected></option>
+                </select>
+            </div>
+            <div class="col-4">
+
+            </div>
+            <div class="form-group col-2">
+                <label class="form-check-label">
+                    SEARCH: 
+                </label>
+                <input id="keyword" class="form-control form-control-sm" type="text" name="keyword" placeholder="SEARCH" autocomplete="off"/>
+            </div>
+        </div>
+    </div>
+    <div id="container-fluid">
+        <div id='forUpdate'></div>
+        <table id="keywords" class="table table-responsive-sm blue custom_table">
+            <thead id="thead">
+                <tr style="cursor: default;">
+                    <th>DATE / TIME</th>
+                    <th>MACHINE ID</th>
+                    <th>MACHINE PF</th>
+                    <th>PRODUCT NAME</th>
+                    <th>PACKAGE</th>
+                    <th>PACKAGE LINE</th>
+                    <th>LOT ID</th>
+                    <th>STATUS</th>
+                    <th>STATUS OWNER</th>
+                    <th>DURATION (HRS.)</th>
+                    <th>COMMENTS</th>
+                    <th>WHO</th>
+                </tr>
+            </thead>
+            <tbody class="tbodyWlp"></tbody>
+        </table>
+    </div>
+</div>
